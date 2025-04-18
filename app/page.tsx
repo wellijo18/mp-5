@@ -1,90 +1,69 @@
 "use client";
+
 import { useState } from "react";
-import Header from "./components/header";
 
 export default function Home() {
     const [url, setUrl] = useState("");
     const [customName, setCustomName] = useState("");
-    const [errorMessage, setErrorMessage] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
+    const [error, setError] = useState("");
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setErrorMessage("");
+        setError("");
         setShortenedUrl("");
 
         try {
-            const response = await fetch("/api/shorten", {
+            const res = await fetch("/api/shorten", {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ url, customName }),
             });
 
-            const data = await response.json();
+            const data = await res.json();
 
-            if (!response.ok) {
-                setErrorMessage(data.message || "An error occurred");
+            if (!res.ok) {
+                setError(data.message || "Unknown error");
                 return;
             }
 
-            setShortenedUrl(`${window.location.origin}/${customName}`);
+            setShortenedUrl(`${window.location.origin}${data.shortenedUrl}`);
         } catch {
-            setErrorMessage("An error occurred while shortening the URL");
+            setError("Something went wrong");
         }
     };
 
     return (
-        <>
-            <Header />
-            <div style={{
-                backgroundColor: "#e6f7ff",
-                color: "black",
-                minHeight: "100vh",
-                padding: "2rem 1rem",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center"
-            }}>
-                <main style={{ width: "100%", maxWidth: "400px" }}>
-                    <h1 style={{ fontWeight: "bold", marginBottom: "1.5rem", textAlign: "center" }}>URL Shortener</h1>
-                    <form onSubmit={handleSubmit}>
-                        <div style={{ marginBottom: "1rem", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                            <label htmlFor="url" style={{ marginBottom: "0.25rem" }}>URL</label>
-                            <input
-                                type="text"
-                                id="url"
-                                value={url}
-                                onChange={(e) => setUrl(e.target.value)}
-                                required
-                                style={{ border: "1px solid royalblue", padding: "0.25rem", width: "100%" }}
-                            />
-                        </div>
-                        <div style={{ marginBottom: "1rem", display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
-                            <label htmlFor="customName" style={{ marginBottom: "0.25rem" }}>Custom Name</label>
-                            <input
-                                type="text"
-                                id="customName"
-                                value={customName}
-                                onChange={(e) => setCustomName(e.target.value)}
-                                required
-                                style={{ border: "1px solid royalblue", padding: "0.25rem", width: "100%" }}
-                            />
-                        </div>
-                        <button type="submit">Shorten</button>
-                    </form>
+        <main style={{ padding: "2rem", textAlign: "center" }}>
+            <h1>URL Shortener</h1>
+            <form onSubmit={handleSubmit} style={{ marginBottom: "1rem" }}>
+                <input
+                    type="text"
+                    placeholder="https://example.com"
+                    value={url}
+                    onChange={(e) => setUrl(e.target.value)}
+                    required
+                    style={{ marginBottom: "0.5rem", width: "300px" }}
+                />
+                <br />
+                <input
+                    type="text"
+                    placeholder="custom-name"
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    required
+                    style={{ marginBottom: "0.5rem", width: "300px" }}
+                />
+                <br />
+                <button type="submit">Shorten</button>
+            </form>
 
-                    {errorMessage && <p>{errorMessage}</p>}
-
-                    {shortenedUrl && (
-                        <div>
-                            <p>Your shortened URL:</p>
-                            <a href={shortenedUrl}>{shortenedUrl}</a>
-                        </div>
-                    )}
-                </main>
-            </div>
-        </>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {shortenedUrl && (
+                <p>
+                    Shortened URL: <a href={shortenedUrl}>{shortenedUrl}</a>
+                </p>
+            )}
+        </main>
     );
 }
