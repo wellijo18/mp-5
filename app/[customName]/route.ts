@@ -1,23 +1,20 @@
-import { NextRequest, NextResponse } from "next/server";
+import { redirect } from "next/navigation";
 import getCollection, { LINKS_COLLECTION } from "@/db";
 
-export async function GET(
-    request: NextRequest,
-    context: { params: { customName: string } }
-) {
-    const { customName } = context.params;
+export default async function RedirectPage({ params }: { params: { customName: string } }) {
+    const { customName } = params;
 
     try {
         const collection = await getCollection(LINKS_COLLECTION);
         const link = await collection.findOne({ customName });
 
         if (!link) {
-            return NextResponse.redirect(new URL("/?error=Link+not+found", request.url));
+            redirect("/?error=Link+not+found");
         }
 
-        return NextResponse.redirect(new URL(link.originalUrl));
+        redirect(link.originalUrl);
     } catch (error) {
-        console.error("Error redirecting:", error);
-        return NextResponse.redirect(new URL("/?error=Server+error", request.url));
+        console.error("Redirect error:", error);
+        redirect("/?error=Server+error");
     }
 }
