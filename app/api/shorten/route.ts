@@ -9,7 +9,7 @@ export async function POST(request: NextRequest) {
         try {
             const urlObject = new URL(url);
             isValidUrl = urlObject.protocol === "http:" || urlObject.protocol === "https:";
-        } catch (error) {
+        } catch (_) {
             isValidUrl = false;
         }
 
@@ -57,8 +57,7 @@ export async function POST(request: NextRequest) {
             shortenedUrl: `/${customName}`,
         });
 
-    } catch (error) {
-        console.error("Error:", error);
+    } catch (_) {
         return NextResponse.json(
             { message: "Something went wrong" },
             { status: 500 }

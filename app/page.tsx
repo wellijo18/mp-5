@@ -1,14 +1,12 @@
 "use client";
 import { useState } from "react";
 import Header from "./components/header";
-import { useRouter } from "next/navigation";
 
 export default function Home() {
     const [url, setUrl] = useState("");
     const [customName, setCustomName] = useState("");
     const [errorMessage, setErrorMessage] = useState("");
     const [shortenedUrl, setShortenedUrl] = useState("");
-    const router = useRouter();
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -32,7 +30,7 @@ export default function Home() {
             }
 
             setShortenedUrl(`${window.location.origin}/${customName}`);
-        } catch (error) {
+        } catch (_) {
             setErrorMessage("An error occurred while shortening the URL");
         }
     };
