@@ -1,8 +1,16 @@
 import { redirect } from "next/navigation";
 import getCollection, { LINKS_COLLECTION } from "@/db";
 
-export default async function RedirectPage({ params }: { params: { customName: string } }) {
-    const { customName } = params;
+interface PageParams {
+    customName: string;
+}
+
+interface PageProps {
+    params: Promise<PageParams>;
+}
+
+export default async function RedirectPage({ params }: PageProps) {
+    const { customName } = await params;
 
     try {
         const collection = await getCollection(LINKS_COLLECTION);
