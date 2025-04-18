@@ -1,3 +1,5 @@
+"use server"
+
 import { redirect } from "next/navigation";
 import getCollection, { LINKS_COLLECTION } from "@/db";
 
