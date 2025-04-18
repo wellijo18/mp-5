@@ -30,7 +30,7 @@ export default function Home() {
             }
 
             setShortenedUrl(`${window.location.origin}/${customName}`);
-        } catch (_) {
+        } catch {
             setErrorMessage("An error occurred while shortening the URL");
         }
     };
